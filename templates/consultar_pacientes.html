@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}
+Consultar Pacientes
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="page-header mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-people text-primary me-2"></i>
+                Consultar Pacientes
+            </h2>
+            <p class="text-muted mb-0">Pesquise, visualize e gerencie os pacientes cadastrados.</p>
+        </div>
+
+        <a href="{{ url_for('cadastro_de_pacientes') }}" class="btn btn-primary">
+            <i class="bi bi-person-plus me-1"></i>
+            Novo paciente
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <form action="{{ url_for('consultar_pacientes') }}" method="get">
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-9">
+                        <label for="search" class="form-label">Buscar paciente</label>
+                        <input type="text"
+                               id="search"
+                               name="search"
+                               class="form-control"
+                               placeholder="Digite o nome ou CPF">
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="filter-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search me-1"></i>
+                                Buscar
+                            </button>
+
+                            <a href="{{ url_for('consultar_pacientes') }}" class="btn btn-light">
+                                <i class="bi bi-x-circle me-1"></i>
+                                Limpar
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="card d-none d-lg-block">
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Foto</th>
+                            <th>Nome</th>
+                            <th>Idade</th>
+                            <th>Nascimento</th>
+                            <th>CPF</th>
+                            <th>Telefone</th>
+                            <th>Cidade</th>
+                            <th>Convênio</th>
+                            <th class="text-end">Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for paciente in pacientes %}
+                            <tr>
+                                <td>
+                                    {% if paciente.foto %}
+                                        <img src="{{ url_for('static', filename='uploads/' ~ paciente.foto) }}"
+                                             alt="{{ paciente.nome }}"
+                                             class="rounded-circle patient-avatar"
+                                             data-bs-toggle="modal"
+                                             data-bs-target="#photoModal"
+                                             onclick="abrirFoto('{{ url_for('static', filename='uploads/' ~ paciente.foto) }}')">
+                                    {% else %}
+                                        <div class="patient-avatar-placeholder">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                    {% endif %}
+                                </td>
+
+                                <td class="fw-semibold">{{ paciente.nome }}</td>
+                                <td>{{ paciente.idade }}</td>
+                                <td>{{ paciente.dnacimento }}</td>
+                                <td>
+                                    {% if session.get('nivel_acesso') == 'Secretaria' %}
+                                        ***.***.***-{{ paciente.cpf[-2:] }}
+                                    {% else %}
+                                        {{ paciente.cpf }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ paciente.telefone }}</td>
+                                <td>{{ paciente.cidade }} / {{ paciente.estado }}</td>
+                                <td>{{ paciente.convenio }}</td>
+
+                                <td class="text-end">
+                                    <div class="table-actions">
+
+                                        {% if session.get('nivel_acesso') != 'Secretaria' %}
+                                            <a href="{{ url_for('historico_paciente', id=paciente.id) }}"
+                                            class="btn btn-sm btn-outline-primary">
+                                                Histórico
+                                            </a>
+                                        {% endif %}
+
+                                        <a href="{{ url_for('editar_paciente', id=paciente.id) }}"
+                                           class="btn btn-sm btn-outline-warning">
+                                            Editar
+                                        </a>
+
+                                        <form action="{{ url_for('deletar_paciente', id=paciente.id) }}"
+                                              method="post"
+                                              onsubmit="return confirm('Tem certeza que deseja deletar este paciente?');">
+
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                Deletar
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    Nenhum paciente encontrado.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="d-lg-none">
+        {% for paciente in pacientes %}
+            <div class="patient-card">
+
+                <div class="d-flex gap-3 align-items-start">
+
+                    <div>
+                        {% if paciente.foto %}
+                            <img src="{{ url_for('static', filename='uploads/' ~ paciente.foto) }}"
+                                 alt="{{ paciente.nome }}"
+                                 class="rounded-circle patient-avatar-lg"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#photoModal"
+                                 onclick="abrirFoto('{{ url_for('static', filename='uploads/' ~ paciente.foto) }}')">
+                        {% else %}
+                            <div class="patient-avatar-placeholder-lg">
+                                <i class="bi bi-person"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1">{{ paciente.nome }}</h5>
+
+                        <div class="text-muted small mb-1">
+                            <i class="bi bi-calendar-heart me-1"></i>
+                            {{ paciente.idade }} anos
+                            {% if paciente.dnacimento %}
+                                • {{ paciente.dnacimento }}
+                            {% endif %}
+                        </div>
+
+                        <div class="text-muted small mb-1">
+                            <i class="bi bi-credit-card-2-front me-1"></i>
+                            {{ paciente.convenio or 'Sem convênio' }}
+                        </div>
+
+                        <div class="text-muted small mb-1">
+                            <i class="bi bi-telephone me-1"></i>
+                            {{ paciente.telefone }}
+                        </div>
+
+                        <div class="text-muted small">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            {{ paciente.cidade }} / {{ paciente.estado }}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mobile-actions mt-3">
+
+                    <a href="{{ url_for('historico_paciente', id=paciente.id) }}"
+                       class="btn btn-sm btn-outline-primary">
+                        Histórico
+                    </a>
+
+                    <a href="{{ url_for('editar_paciente', id=paciente.id) }}"
+                       class="btn btn-sm btn-outline-warning">
+                        Editar
+                    </a>
+
+                    <form action="{{ url_for('deletar_paciente', id=paciente.id) }}"
+                          method="post"
+                          onsubmit="return confirm('Tem certeza que deseja deletar este paciente?');">
+
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            Deletar
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-person-x"></i>
+                <p>Nenhum paciente encontrado.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-3">
+        {{ pagination.links }}
+    </div>
+
+</div>
+
+<div class="modal fade" id="photoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Foto do paciente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid rounded" alt="Foto do paciente">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function abrirFoto(src) {
+        document.getElementById('modalImage').src = src;
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}
+Painel Médico
+{% endblock %}
+
+{% block content %}
+
+{% macro hora_formatada(horario) %}
+    {{ "%02d:%02d"|format(horario.seconds // 3600, (horario.seconds // 60) % 60) }}
+{% endmacro %}
+
+<div class="container-fluid py-4">
+
+    <div class="page-header mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-heart-pulse text-primary me-2"></i>
+                Painel Médico
+            </h2>
+            <p class="text-muted mb-0">Fila de atendimento e consultas do dia.</p>
+        </div>
+    </div>
+
+    <div class="row g-3 g-md-4 mb-4">
+
+        <div class="col-6 col-lg-3">
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon bg-secondary-subtle text-secondary">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Agendadas</h6>
+                        <h2 class="mb-0">{{ agendadas|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon bg-warning-subtle text-warning">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Aguardando</h6>
+                        <h2 class="mb-0">{{ aguardando|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon bg-info-subtle text-info">
+                        <i class="bi bi-activity"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Em Atendimento</h6>
+                        <h2 class="mb-0">{{ em_atendimento|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon bg-success-subtle text-success">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Atendidas</h6>
+                        <h2 class="mb-0">{{ atendidas|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <div class="section-header mb-4">
+                <div>
+                    <h4 class="mb-1">
+                        <i class="bi bi-list-check text-primary me-2"></i>
+                        Fila Médica
+                    </h4>
+                    <p class="text-muted mb-0">Pacientes agendados, aguardando ou em atendimento.</p>
+                </div>
+
+                <a href="{{ url_for('consulta_agenda') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-calendar-week me-1"></i>
+                    Ver agenda
+                </a>
+            </div>
+
+            {% for consulta in em_atendimento %}
+                <div class="queue-item queue-info">
+                    <div class="queue-content">
+                        <div>
+                            <h5 class="mb-1">{{ consulta.paciente_nome }}</h5>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                {{ hora_formatada(consulta.horario) }}
+                                <span class="mx-1">•</span>
+                                <i class="bi bi-credit-card-2-front me-1"></i>
+                                {{ consulta.convenio }}
+                            </small>
+                        </div>
+
+                        <div class="queue-actions">
+                            <span class="badge bg-info">Em atendimento</span>
+                            <a href="{{ url_for('atendimento', id=consulta.id) }}" class="btn btn-sm btn-info">
+                                Continuar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% for consulta in aguardando %}
+                <div class="queue-item queue-warning">
+                    <div class="queue-content">
+                        <div>
+                            <h5 class="mb-1">{{ consulta.paciente_nome }}</h5>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                {{ hora_formatada(consulta.horario) }}
+                                <span class="mx-1">•</span>
+                                <i class="bi bi-credit-card-2-front me-1"></i>
+                                {{ consulta.convenio }}
+                            </small>
+                        </div>
+
+                        <div class="queue-actions">
+                            <span class="badge bg-warning text-dark">Aguardando</span>
+                            <a href="{{ url_for('atendimento', id=consulta.id) }}" class="btn btn-sm btn-warning">
+                                Atender
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% for consulta in agendadas %}
+                <div class="queue-item queue-muted">
+                    <div class="queue-content">
+                        <div>
+                            <h5 class="mb-1">{{ consulta.paciente_nome }}</h5>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                {{ hora_formatada(consulta.horario) }}
+                                <span class="mx-1">•</span>
+                                <i class="bi bi-credit-card-2-front me-1"></i>
+                                {{ consulta.convenio }}
+                            </small>
+                        </div>
+
+                        <div class="queue-actions">
+                            <span class="badge bg-secondary">Agendada</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if not agendadas and not aguardando and not em_atendimento %}
+                <div class="empty-state">
+                    <i class="bi bi-calendar-check"></i>
+                    <p>Nenhuma consulta pendente no momento.</p>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 class="mb-3">
+                <i class="bi bi-check2-square text-success me-2"></i>
+                Atendidas Hoje
+            </h4>
+
+            {% for consulta in atendidas %}
+                <div class="queue-item queue-success">
+                    <div class="queue-content">
+                        <div>
+                            <h5 class="mb-1">{{ consulta.paciente_nome }}</h5>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                {{ hora_formatada(consulta.horario) }}
+                                <span class="mx-1">•</span>
+                                <i class="bi bi-credit-card-2-front me-1"></i>
+                                {{ consulta.convenio }}
+                            </small>
+                        </div>
+
+                        <span class="badge bg-success">Atendida</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-clipboard2-pulse"></i>
+                    <p>Nenhuma consulta atendida hoje.</p>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    setTimeout(() => {
+        location.reload();
+    }, 30000);
+</script>
+
+{% endblock %}

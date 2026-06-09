@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}
+Editar Consulta
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="page-header mb-4">
+
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-pencil-square text-primary me-2"></i>
+                Editar Consulta
+            </h2>
+
+            <p class="text-muted mb-0">
+                Atualize os dados da consulta selecionada.
+            </p>
+        </div>
+
+        <a href="{{ url_for('consulta_agenda') }}"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Voltar para agenda
+
+        </a>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-body p-4">
+
+            <form action="{{ url_for('editar_consulta', id=consulta.id) }}"
+                  method="post">
+
+                <div class="form-section">
+
+                    <div class="section-title">
+                        <i class="bi bi-calendar-event text-primary"></i>
+                        Informações da Consulta
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label for="data" class="form-label fw-semibold">
+                                Data
+                            </label>
+
+                            <input type="date"
+                                   id="data"
+                                   name="data"
+                                   class="form-control"
+                                   value="{{ consulta.data.strftime('%Y-%m-%d') }}"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label for="horario" class="form-label fw-semibold">
+                                Horário
+                            </label>
+
+                            <input type="time"
+                                   id="horario"
+                                   name="horario"
+                                   class="form-control"
+                                   value="{{ consulta.horario }}"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-8">
+
+                            <label for="paciente" class="form-label fw-semibold">
+                                Paciente
+                            </label>
+
+                            <select id="paciente"
+                                    name="paciente"
+                                    class="form-select"
+                                    required>
+
+                                {% for paciente in pacientes %}
+
+                                    <option value="{{ paciente.id }}"
+                                        {% if consulta.paciente_id == paciente.id %}
+                                            selected
+                                        {% endif %}>
+
+                                        {{ paciente.nome }}
+
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label for="status" class="form-label fw-semibold">
+                                Status
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   value="{{ consulta.status }}"
+                                   disabled>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-section mt-5">
+
+                    <div class="section-title">
+                        <i class="bi bi-chat-left-text text-primary"></i>
+                        Informações Médicas
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-12">
+
+                            <label for="motivo" class="form-label fw-semibold">
+                                Motivo da Consulta
+                            </label>
+
+                            <textarea id="motivo"
+                                      name="motivo"
+                                      class="form-control"
+                                      rows="4"
+                                      required>{{ consulta.motivo }}</textarea>
+
+                        </div>
+
+                        {% if session.get('nivel_acesso') != 'Secretaria' %}
+                            <div class="col-12">
+
+                                <label for="diagnostico" class="form-label fw-semibold">
+                                    Diagnóstico e Conduta
+                                </label>
+
+                                <textarea id="diagnostico"
+                                        name="diagnostico"
+                                        class="form-control"
+                                        rows="6"
+                                        placeholder="Descreva o diagnóstico, exames, orientações e conduta médica...">{{ consulta.diagnostico }}</textarea>
+
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="form-actions mt-5">
+
+                    <a href="{{ url_for('consulta_agenda') }}"
+                       class="btn btn-light">
+
+                        <i class="bi bi-x-circle me-1"></i>
+                        Cancelar
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-circle me-1"></i>
+                        Salvar alterações
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

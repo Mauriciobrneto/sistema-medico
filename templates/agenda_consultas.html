@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}
+Agendar Consulta
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="page-header mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-calendar-plus text-primary me-2"></i>
+                Agendar Consulta
+            </h2>
+            <p class="text-muted mb-0">Preencha os dados abaixo para registrar uma nova consulta.</p>
+        </div>
+
+        <a href="{{ url_for('consulta_agenda') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-calendar-week me-1"></i>
+            Ver agenda
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-4">
+
+            <form action="{{ url_for('agendar_consulta') }}" method="post">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label for="data" class="form-label fw-semibold">
+                            <i class="bi bi-calendar-event me-1 text-primary"></i>
+                            Data
+                        </label>
+                        <input type="date" id="data" name="data" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="horario" class="form-label fw-semibold">
+                            <i class="bi bi-clock me-1 text-primary"></i>
+                            Horário
+                        </label>
+                        <input type="time" id="horario" name="horario" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label for="paciente" class="form-label fw-semibold">
+                            <i class="bi bi-person me-1 text-primary"></i>
+                            Paciente
+                        </label>
+                        <select id="paciente" name="paciente" class="form-select" required>
+                            <option value="">Selecione um paciente</option>
+                            {% for paciente in pacientes %}
+                                <option value="{{ paciente.id }}">{{ paciente.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="consultas_convenio" class="form-label fw-semibold">
+                            <i class="bi bi-credit-card-2-front me-1 text-primary"></i>
+                            Convênio
+                        </label>
+                        <input type="text" id="consultas_convenio" name="consultas_convenio" class="form-control" required>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="motivo" class="form-label fw-semibold">
+                            <i class="bi bi-chat-left-text me-1 text-primary"></i>
+                            Motivo da consulta
+                        </label>
+                        <textarea id="motivo" name="motivo" class="form-control" rows="4" required></textarea>
+                    </div>
+
+                    {% if session.get('nivel_acesso') != 'Secretaria' %}
+                        <div class="col-12">
+
+                            <label for="diagnostico" class="form-label fw-semibold">
+                                <i class="bi bi-file-medical me-1 text-primary"></i>
+                                Diagnóstico e conduta
+                            </label>
+
+                            <textarea id="diagnostico"
+                                    name="diagnostico"
+                                    class="form-control"
+                                    rows="4"></textarea>
+
+                            <small class="text-muted">
+                                Este campo pode ser preenchido pelo médico durante o atendimento.
+                            </small>
+
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="form-actions mt-4">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-light">
+                        <i class="bi bi-x-circle me-1"></i>
+                        Cancelar
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Agendar consulta
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

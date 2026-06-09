@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}
+Histórico do Paciente
+{% endblock %}
+
+{% block content %}
+
+{% macro hora_formatada(horario) %}
+    {% if horario.seconds is defined %}
+        {{ "%02d:%02d"|format(horario.seconds // 3600, (horario.seconds // 60) % 60) }}
+    {% else %}
+        {{ horario }}
+    {% endif %}
+{% endmacro %}
+
+<div class="container-fluid py-4">
+
+    <div class="page-header mb-4 no-print">
+
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-file-earmark-medical text-primary me-2"></i>
+                Histórico do Paciente
+            </h2>
+
+            <p class="text-muted mb-0">
+                Visualize os dados cadastrais e consultas realizadas.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+
+            <a href="{{ url_for('consultar_pacientes') }}"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Voltar
+
+            </a>
+
+            <button onclick="window.print()"
+                    class="btn btn-primary">
+
+                <i class="bi bi-printer me-1"></i>
+                Imprimir histórico
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-4">
+
+            <div class="card h-100">
+
+                {% if paciente.foto %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ paciente.foto) }}"
+                         class="patient-profile-img"
+                         alt="{{ paciente.nome }}">
+                {% else %}
+                    <div class="patient-profile-placeholder">
+                        <i class="bi bi-person"></i>
+                        <span>Sem foto</span>
+                    </div>
+                {% endif %}
+
+                <div class="card-body">
+
+                    <h4 class="card-title mb-4">
+                        {{ paciente.nome }}
+                    </h4>
+
+                    <div class="patient-info-list">
+
+                        <div>
+                            <i class="bi bi-calendar-heart text-primary"></i>
+                            <span>
+                                <strong>Idade:</strong>
+                                {{ paciente.idade }}
+                            </span>
+                        </div>
+
+                        <div>
+                            <i class="bi bi-cake2 text-primary"></i>
+                            <span>
+                                <strong>Nascimento:</strong>
+                                {{ paciente.dnacimento }}
+                            </span>
+                        </div>
+
+                        <div>
+                            <i class="bi bi-card-text text-primary"></i>
+                            <span>
+                                <strong>CPF:</strong>
+                                {{ paciente.cpf }}
+                            </span>
+                        </div>
+
+                        <div>
+                            <i class="bi bi-telephone text-primary"></i>
+                            <span>
+                                <strong>Telefone:</strong>
+                                {{ paciente.telefone }}
+                            </span>
+                        </div>
+
+                        <div>
+                            <i class="bi bi-credit-card-2-front text-primary"></i>
+                            <span>
+                                <strong>Convênio:</strong>
+                                {{ paciente.convenio }}
+                            </span>
+                        </div>
+
+                        <div>
+                            <i class="bi bi-geo-alt text-primary"></i>
+                            <span>
+                                <strong>Endereço:</strong><br>
+
+                                {{ paciente.rua }},
+                                {{ paciente.numero }}<br>
+
+                                {{ paciente.cidade }}
+                                /
+                                {{ paciente.estado }}<br>
+
+                                {{ paciente.pais }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-8">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <div class="section-header mb-4">
+
+                        <div>
+                            <h4 class="mb-1">
+                                <i class="bi bi-clock-history text-primary me-2"></i>
+                                Histórico de Consultas
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                Atendimentos registrados no sistema.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    {% for consulta in consultas %}
+
+                        <div class="history-item">
+
+                            <div class="history-header">
+
+                                <div>
+                                    <h5 class="mb-1">
+                                        {{ consulta.data }}
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock me-1"></i>
+                                        {{ hora_formatada(consulta.horario) }}
+                                    </small>
+                                </div>
+
+                                <span class="badge bg-primary">
+                                    {{ consulta.consultas_convenio }}
+                                </span>
+
+                            </div>
+
+                            <div class="history-section">
+
+                                <strong>
+                                    <i class="bi bi-chat-left-text me-1"></i>
+                                    Motivo
+                                </strong>
+
+                                <p class="mb-0">
+                                    {{ consulta.motivo }}
+                                </p>
+
+                            </div>
+
+                            <div class="history-section">
+
+                                <strong>
+                                    <i class="bi bi-file-medical me-1"></i>
+                                    Diagnóstico e Conduta
+                                </strong>
+
+                                <p class="mb-0">
+                                    {{ consulta.diagnostico or 'Sem diagnóstico registrado.' }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty-state">
+                            <i class="bi bi-clipboard-x"></i>
+                            <p>Nenhuma consulta registrada para este paciente.</p>
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}
+Atendimento Médico
+{% endblock %}
+
+{% block content %}
+
+{% macro hora_formatada(horario) %}
+    {{ "%02d:%02d"|format(horario.seconds // 3600, (horario.seconds // 60) % 60) }}
+{% endmacro %}
+
+<div class="container-fluid py-4">
+
+    <div class="page-header mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-clipboard2-pulse text-primary me-2"></i>
+                Atendimento Médico
+            </h2>
+            <p class="text-muted mb-0">Consulta em andamento.</p>
+        </div>
+
+        <a href="{{ url_for('consulta_agenda') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Voltar para agenda
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-4">
+
+            <div class="card h-100">
+
+                {% if paciente.foto %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ paciente.foto) }}"
+                         class="patient-profile-img"
+                         alt="{{ paciente.nome }}">
+                {% else %}
+                    <div class="patient-profile-placeholder">
+                        <i class="bi bi-person"></i>
+                        <span>Sem foto</span>
+                    </div>
+                {% endif %}
+
+                <div class="card-body">
+
+                    <h4 class="card-title mb-3">
+                        {{ paciente.nome }}
+                    </h4>
+
+                    <div class="patient-info-list">
+
+                        <div>
+                            <i class="bi bi-calendar-heart text-primary"></i>
+                            <span><strong>Idade:</strong> {{ paciente.idade }}</span>
+                        </div>
+
+                        <div>
+                            <i class="bi bi-telephone text-primary"></i>
+                            <span><strong>Telefone:</strong> {{ paciente.telefone }}</span>
+                        </div>
+
+                        <div>
+                            <i class="bi bi-card-text text-primary"></i>
+                            <span><strong>CPF:</strong> {{ paciente.cpf }}</span>
+                        </div>
+
+                        <div>
+                            <i class="bi bi-credit-card-2-front text-primary"></i>
+                            <span><strong>Convênio:</strong> {{ paciente.convenio }}</span>
+                        </div>
+
+                        <div>
+                            <i class="bi bi-geo-alt text-primary"></i>
+                            <span>
+                                <strong>Endereço:</strong><br>
+                                {{ paciente.rua }}, {{ paciente.numero }}<br>
+                                {{ paciente.cidade }} / {{ paciente.estado }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-8">
+
+            <div class="card mb-4">
+
+                <div class="card-body">
+
+                    <div class="section-header mb-4">
+
+                        <div>
+                            <h4 class="mb-1">
+                                <i class="bi bi-file-medical text-primary me-2"></i>
+                                Consulta Atual
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                {{ consulta.data.strftime('%d/%m/%Y') }}
+                                às
+                                {{ hora_formatada(consulta.horario) }}
+                            </p>
+                        </div>
+
+                        <span class="badge bg-info fs-6">
+                            Em atendimento
+                        </span>
+
+                    </div>
+
+                    <form method="post">
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Motivo da consulta
+                            </label>
+
+                            <textarea name="motivo"
+                                      class="form-control"
+                                      rows="4"
+                                      required>{{ consulta.motivo }}</textarea>
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Diagnóstico e Conduta
+                            </label>
+
+                            <textarea name="diagnostico"
+                                      class="form-control"
+                                      rows="10"
+                                      placeholder="Descreva o diagnóstico, conduta e orientações...">{{ consulta.diagnostico }}</textarea>
+
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Finalizar Atendimento
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="section-header mb-4">
+                        <div>
+                            <h4 class="mb-1">
+                                <i class="bi bi-clock-history text-primary me-2"></i>
+                                Histórico do Paciente
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                Últimos atendimentos registrados.
+                            </p>
+                        </div>
+                    </div>
+
+                    {% for item in historico %}
+
+                        <div class="history-item">
+
+                            <div class="d-flex justify-content-between align-items-center mb-2 gap-2">
+
+                                <strong>
+                                    {{ item.data.strftime('%d/%m/%Y') }}
+                                </strong>
+
+                                <span class="badge bg-secondary">
+                                    {{ hora_formatada(item.horario) }}
+                                </span>
+
+                            </div>
+
+                            <div class="mb-2">
+                                <strong>Motivo:</strong><br>
+                                {{ item.motivo }}
+                            </div>
+
+                            <div>
+                                <strong>Diagnóstico:</strong><br>
+                                {{ item.diagnostico or 'Sem diagnóstico registrado.' }}
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty-state">
+                            <i class="bi bi-clock-history"></i>
+                            <p>Nenhum histórico encontrado.</p>
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

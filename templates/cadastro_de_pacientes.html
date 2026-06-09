@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block title %}
+Cadastrar Paciente
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="page-header mb-4">
+
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-person-plus text-primary me-2"></i>
+                Cadastrar Paciente
+            </h2>
+
+            <p class="text-muted mb-0">
+                Preencha os dados do novo paciente.
+            </p>
+        </div>
+
+        <a href="{{ url_for('consultar_pacientes') }}"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-people me-1"></i>
+            Ver pacientes
+
+        </a>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-body p-4">
+
+            <form action="{{ url_for('cadastrar_paciente') }}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  onsubmit="return validarCPF()">
+
+                <div class="form-section">
+
+                    <div class="section-title">
+                        <i class="bi bi-person-vcard text-primary"></i>
+                        Dados Pessoais
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-8">
+
+                            <label for="nome" class="form-label fw-semibold">
+                                Nome
+                            </label>
+
+                            <input type="text"
+                                   id="nome"
+                                   name="nome"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label for="idade" class="form-label fw-semibold">
+                                Idade
+                            </label>
+
+                            <input type="number"
+                                   id="idade"
+                                   name="idade"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label for="dnacimento" class="form-label fw-semibold">
+                                Data de nascimento
+                            </label>
+
+                            <input type="text"
+                                   id="dnacimento"
+                                   name="dnacimento"
+                                   class="form-control"
+                                   placeholder="01/01/1991"
+                                   required>
+
+                            <small class="text-muted">
+                                Formato: 01/01/1991
+                            </small>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label for="cpf" class="form-label fw-semibold">
+                                CPF
+                            </label>
+
+                            <input type="text"
+                                   id="cpf"
+                                   name="cpf"
+                                   class="form-control"
+                                   placeholder="000.000.000-00"
+                                   required>
+
+                            <small class="text-muted">
+                                Formato: 000.000.000-00
+                            </small>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label for="telefone" class="form-label fw-semibold">
+                                Telefone
+                            </label>
+
+                            <input type="text"
+                                   id="telefone"
+                                   name="telefone"
+                                   class="form-control"
+                                   placeholder="(00) 00000-0000"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label for="convenio" class="form-label fw-semibold">
+                                Convênio
+                            </label>
+
+                            <input type="text"
+                                   id="convenio"
+                                   name="convenio"
+                                   class="form-control">
+
+                        </div>
+
+                        <div class="col-12">
+
+                            <label for="foto" class="form-label fw-semibold">
+                                Foto do paciente
+                            </label>
+
+                            <input type="file"
+                                id="foto"
+                                name="foto"
+                                class="form-control mb-3">
+
+                            <input type="hidden" id="foto_webcam" name="foto_webcam">
+
+                            <div class="camera-box border rounded p-3">
+
+                                <div class="d-flex gap-2 flex-wrap mb-3">
+
+                                    <button type="button"
+                                            class="btn btn-outline-primary btn-sm w-auto"
+                                            onclick="abrirCamera()">
+
+                                        <i class="bi bi-camera-video me-1"></i>
+                                        Abrir câmera
+
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-outline-success btn-sm w-auto"
+                                            onclick="capturarFoto()">
+
+                                        <i class="bi bi-camera me-1"></i>
+                                        Capturar foto
+
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-outline-danger btn-sm w-auto"
+                                            onclick="limparFotoWebcam()">
+
+                                        <i class="bi bi-x-circle me-1"></i>
+                                        Limpar
+
+                                    </button>
+
+                                </div>
+
+                                <video id="video"
+                                    autoplay
+                                    playsinline
+                                    style="width: 100%; max-width: 360px; border-radius: 12px; display:none;">
+                                </video>
+
+                                <canvas id="canvas" style="display:none;"></canvas>
+
+                                <div class="mt-3">
+                                    <img id="previewFoto"
+                                        src=""
+                                        alt="Prévia da foto"
+                                        style="max-width: 180px; border-radius: 12px; display:none;">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-section mt-5">
+
+                    <div class="section-title">
+                        <i class="bi bi-geo-alt text-primary"></i>
+                        Endereço
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label for="rua" class="form-label fw-semibold">
+                                Rua
+                            </label>
+
+                            <input type="text"
+                                   id="rua"
+                                   name="rua"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-2">
+
+                            <label for="numero" class="form-label fw-semibold">
+                                Número
+                            </label>
+
+                            <input type="text"
+                                   id="numero"
+                                   name="numero"
+                                   class="form-control">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label for="cidade" class="form-label fw-semibold">
+                                Cidade
+                            </label>
+
+                            <input type="text"
+                                   id="cidade"
+                                   name="cidade"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label for="estado" class="form-label fw-semibold">
+                                Estado
+                            </label>
+
+                            <input type="text"
+                                   id="estado"
+                                   name="estado"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label for="pais" class="form-label fw-semibold">
+                                País
+                            </label>
+
+                            <input type="text"
+                                   id="pais"
+                                   name="pais"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-actions mt-5">
+
+                    <a href="{{ url_for('dashboard') }}"
+                       class="btn btn-light">
+
+                        <i class="bi bi-x-circle me-1"></i>
+                        Cancelar
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-circle me-1"></i>
+                        Cadastrar paciente
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    function validarCPF() {
+
+        const cpf = document.getElementById('cpf').value;
+
+        const regex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+
+        if (!regex.test(cpf)) {
+
+            alert('Por favor, insira um CPF no formato 000.000.000-00');
+
+            return false;
+        }
+
+        return true;
+    }
+
+    document.getElementById('dnacimento').addEventListener('input', function (e) {
+
+        let value = e.target.value.replace(/\D/g, '');
+
+        if (value.length > 8) {
+            value = value.slice(0, 8);
+        }
+
+        e.target.value = value.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+
+    });
+
+    document.getElementById('cpf').addEventListener('input', function (e) {
+
+        let value = e.target.value.replace(/\D/g, '');
+
+        if (value.length > 11) {
+            value = value.slice(0, 11);
+        }
+
+        e.target.value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+
+    });
+
+    document.getElementById('telefone').addEventListener('input', function (e) {
+
+        let value = e.target.value.replace(/\D/g, '');
+
+        if (value.length > 11) {
+            value = value.slice(0, 11);
+        }
+
+        e.target.value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+
+    });
+
+let streamCamera = null;
+
+async function abrirCamera() {
+    try {
+        const video = document.getElementById('video');
+
+        streamCamera = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+        });
+
+        video.srcObject = streamCamera;
+        video.style.display = 'block';
+
+    } catch (erro) {
+        alert('Não foi possível acessar a câmera. Verifique a permissão do navegador.');
+        console.error(erro);
+    }
+}
+
+function capturarFoto() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const preview = document.getElementById('previewFoto');
+    const campoFoto = document.getElementById('foto_webcam');
+
+    if (!streamCamera) {
+        alert('Abra a câmera antes de capturar a foto.');
+        return;
+    }
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const contexto = canvas.getContext('2d');
+    contexto.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imagemBase64 = canvas.toDataURL('image/jpeg', 0.85);
+
+    campoFoto.value = imagemBase64;
+    preview.src = imagemBase64;
+    preview.style.display = 'block';
+}
+
+function limparFotoWebcam() {
+    document.getElementById('foto_webcam').value = '';
+    document.getElementById('previewFoto').src = '';
+    document.getElementById('previewFoto').style.display = 'none';
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="mb-4">
+
+        <h2 class="mb-1">
+            Bem-vindo(a), {{ username }}
+        </h2>
+
+        <p class="text-muted mb-0">
+            Painel geral do consultório
+        </p>
+
+    </div>
+
+    <!-- CARDS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Consultas Hoje
+                    </h6>
+
+                    <h2>
+                        {{ consultas_hoje|length }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <h6 class="text-warning">
+                        Aguardando
+                    </h6>
+
+                    <h2>
+                        {{ aguardando|length }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <h6 class="text-info">
+                        Em Atendimento
+                    </h6>
+
+                    <h2>
+                        {{ em_atendimento|length }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <h6 class="text-success">
+                        Atendidas
+                    </h6>
+
+                    <h2>
+                        {{ atendidas|length }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <!-- FILA -->
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <div>
+
+                            <h4 class="mb-1">
+                                Fila de Atendimento
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                Consultas do dia
+                            </p>
+
+                        </div>
+
+                        <a href="{{ url_for('consulta_agenda') }}" class="btn btn-primary btn-sm px-3 w-auto">
+                            Abrir Agenda
+                        </a>
+
+                    </div>
+
+                    <!-- AGENDADAS -->
+                    {% for consulta in agendadas %}
+
+                        <div class="border rounded p-3 mb-3 bg-light">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <h5 class="mb-1">
+                                        {{ consulta.paciente_nome }}
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        {{ consulta.horario }}
+                                    </small>
+
+                                </div>
+
+                                <span class="badge bg-secondary">
+                                    Agendada
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                    <!-- AGUARDANDO -->
+                    {% for consulta in aguardando %}
+
+                        <div class="border rounded p-3 mb-3 bg-warning-subtle">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <h5 class="mb-1">
+                                        {{ consulta.paciente_nome }}
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        {{ consulta.horario }}
+                                    </small>
+
+                                </div>
+
+                                <span class="badge bg-warning text-dark">
+                                    Aguardando
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                    <!-- EM ATENDIMENTO -->
+                    {% for consulta in em_atendimento %}
+
+                        <div class="border rounded p-3 mb-3 bg-info-subtle">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <h5 class="mb-1">
+                                        {{ consulta.paciente_nome }}
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        {{ consulta.horario }}
+                                    </small>
+
+                                </div>
+
+                                <span class="badge bg-info">
+                                    Em Atendimento
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                    <!-- ATENDIDAS -->
+                    {% for consulta in atendidas %}
+
+                        <div class="border rounded p-3 mb-3 bg-success-subtle">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <h5 class="mb-1">
+                                        {{ consulta.paciente_nome }}
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        {{ consulta.horario }}
+                                    </small>
+
+                                </div>
+
+                                <span class="badge bg-success">
+                                    Atendida
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ANOTAÇÕES -->
+        <div class="col-lg-5">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4 class="mb-4">
+                        Anotações
+                    </h4>
+
+                    <form action="{{ url_for('adicionar_anotacao') }}"
+                          method="post">
+
+                        <div class="mb-3">
+
+                            <textarea name="conteudo"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Digite uma anotação..."
+                                      required></textarea>
+
+                        </div>
+
+                        <div class="d-flex justify-content-end mb-4">
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+
+                                Adicionar
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    {% for anotacao in anotacoes %}
+
+                        <div class="border rounded p-3 mb-3">
+
+                            <div class="d-flex justify-content-between align-items-start">
+
+                                <div>
+                                    {{ anotacao.conteudo }}
+                                </div>
+
+                                <form action="{{ url_for('deletar_anotacao', id=anotacao.id) }}"
+                                      method="post">
+
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger">
+
+                                        X
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-muted">
+                            Nenhuma anotação cadastrada.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
