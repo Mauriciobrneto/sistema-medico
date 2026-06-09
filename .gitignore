@@ -5,3 +5,6 @@ __pycache__/
 app.log
 backups/
 static/uploads/
+instalar/
+*.exe
+*.msi
