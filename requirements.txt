@@ -28,3 +28,6 @@ SQLAlchemy==2.0.48
 typing_extensions==4.15.0
 Werkzeug==3.1.6
 WTForms==3.2.2
+flask-paginate==2024.4.12
+gunicorn==23.0.0
+python-dotenv==1.1.1
