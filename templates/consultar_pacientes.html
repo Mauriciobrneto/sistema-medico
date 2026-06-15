@@ -84,11 +84,12 @@ Consultar Pacientes
                                 <td>
                                     {% if paciente.foto %}
                                         <img src="{{ url_for('static', filename='uploads/' ~ paciente.foto) }}"
-                                             alt="{{ paciente.nome }}"
-                                             class="rounded-circle patient-avatar"
-                                             data-bs-toggle="modal"
-                                             data-bs-target="#photoModal"
-                                             onclick="abrirFoto('{{ url_for('static', filename='uploads/' ~ paciente.foto) }}')">
+                                        alt="{{ paciente.nome }}"
+                                        class="rounded-circle patient-avatar-lg"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#photoModal"
+                                        data-src="{{ url_for('static', filename='uploads/' ~ paciente.foto) }}"
+                                        onclick="abrirFoto(this.dataset.src)">
                                     {% else %}
                                         <div class="patient-avatar-placeholder">
                                             <i class="bi bi-person"></i>
@@ -113,12 +114,12 @@ Consultar Pacientes
                                 <td class="text-end">
                                     <div class="table-actions">
 
-                                        {% if session.get('nivel_acesso') != 'Secretaria' %}
+                                        
                                             <a href="{{ url_for('historico_paciente', id=paciente.id) }}"
                                             class="btn btn-sm btn-outline-primary">
                                                 Histórico
                                             </a>
-                                        {% endif %}
+                                        
 
                                         <a href="{{ url_for('editar_paciente', id=paciente.id) }}"
                                            class="btn btn-sm btn-outline-warning">
@@ -162,11 +163,12 @@ Consultar Pacientes
                     <div>
                         {% if paciente.foto %}
                             <img src="{{ url_for('static', filename='uploads/' ~ paciente.foto) }}"
-                                 alt="{{ paciente.nome }}"
-                                 class="rounded-circle patient-avatar-lg"
-                                 data-bs-toggle="modal"
-                                 data-bs-target="#photoModal"
-                                 onclick="abrirFoto('{{ url_for('static', filename='uploads/' ~ paciente.foto) }}')">
+                            alt="{{ paciente.nome }}"
+                            class="rounded-circle patient-avatar"
+                            data-bs-toggle="modal"
+                            data-bs-target="#photoModal"
+                            data-src="{{ url_for('static', filename='uploads/' ~ paciente.foto) }}"
+                            onclick="abrirFoto(this.dataset.src)">
                         {% else %}
                             <div class="patient-avatar-placeholder-lg">
                                 <i class="bi bi-person"></i>

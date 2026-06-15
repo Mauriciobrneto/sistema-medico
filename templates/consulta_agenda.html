@@ -128,9 +128,23 @@ Consultar Agenda
                                         {% endif %}
 
                                         {% if session.get('nivel_acesso') != 'Secretaria' %}
-                                            <a href="{{ url_for('atendimento', id=consulta.id) }}" class="btn btn-sm btn-outline-info">
-                                                Atender
-                                            </a>
+
+                                            {% if consulta.status == 'Atendida' %}
+
+                                                <a href="{{ url_for('atendimento', id=consulta.id) }}"
+                                                class="btn btn-sm btn-outline-primary">
+                                                    Editar Atendimento
+                                                </a>
+
+                                            {% else %}
+
+                                                <a href="{{ url_for('atendimento', id=consulta.id) }}"
+                                                class="btn btn-sm btn-outline-info">
+                                                    Atender
+                                                </a>
+
+                                            {% endif %}
+
                                         {% endif %}
 
                                         {% if session.get('nivel_acesso') != 'Secretaria' %}
@@ -224,9 +238,21 @@ Consultar Agenda
                         </form>
                     {% endif %}
 
-                    <a href="{{ url_for('atendimento', id=consulta.id) }}" class="btn btn-sm btn-outline-info">
-                        Atender
-                    </a>
+                    {% if consulta.status == 'Atendida' %}
+
+                        <a href="{{ url_for('atendimento', id=consulta.id) }}"
+                        class="btn btn-sm btn-outline-primary">
+                            Editar Atendimento
+                        </a>
+
+                    {% else %}
+
+                        <a href="{{ url_for('atendimento', id=consulta.id) }}"
+                        class="btn btn-sm btn-outline-info">
+                            Atender
+                        </a>
+
+                    {% endif %}
 
                     <a href="{{ url_for('editar_consulta', id=consulta.id) }}" class="btn btn-sm btn-outline-warning">
                         Editar

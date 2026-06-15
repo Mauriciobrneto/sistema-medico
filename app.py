@@ -476,9 +476,10 @@ def deletar_paciente(id):
 @login_required
 def historico_paciente(id):
 
-    if session.get('nivel_acesso') == 'Secretaria':
-        flash('Acesso não permitido para recepção.', 'danger')
-        return redirect(url_for('consultar_pacientes'))
+    # if session.get('nivel_acesso') == 'Secretaria':
+    #     flash('Acesso não permitido para recepção.', 'danger')
+    #     return redirect(url_for('consultar_pacientes'))
+    # Bloqueio removido por necessidade do consultório atual
 
     """Exibe histórico completo do paciente."""
     paciente = banco.obter_paciente_por_id(id)
@@ -1006,7 +1007,7 @@ def privacidade():
 
 if __name__ == '__main__':
     app.run(
-        debug=False,
+        debug=True,
         host='0.0.0.0',
         port=5000
     )
